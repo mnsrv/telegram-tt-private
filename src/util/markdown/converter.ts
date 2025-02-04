@@ -24,22 +24,25 @@ function processNode(node: MarkdownNode, state: ConversionState): void {
     return;
   }
 
-  const startOffset = state.offset;
-  
   if (Array.isArray(node.content)) {
     // Add entity before processing children
-    const entityIndex = state.entities.length;
-    state.entities.push({
+    const startOffset = state.offset;
+    
+    // Create entity first
+    const entity = {
       type: NODE_TYPE_TO_ENTITY[node.type],
       offset: startOffset,
-      length: 0,  // Will update after processing children
-    } as ApiMessageEntity);
+      length: 0  // Will update after processing children
+    } as ApiMessageEntity;
+    
+    // Add to entities array
+    state.entities.push(entity);
     
     // Process all child nodes
     node.content.forEach((child) => processNode(child, state));
     
-    // Update entity length using stored index
-    state.entities[entityIndex].length = state.offset - startOffset;
+    // Update entity length
+    entity.length = state.offset - startOffset;
   }
 }
 

@@ -19,10 +19,10 @@ const TOKENS = {
   CODE: /`/,
 } as const;
 
-export function tokenize(input: string): Token[] {
+export function tokenize(text: string): Token[] {
   const tokens: Token[] = [];
   let currentOffset = 0;
-  let text = input;
+  const openTokens = new Map<string, number>();
 
   while (text.length > 0) {
     let matched = false;
@@ -31,12 +31,21 @@ export function tokenize(input: string): Token[] {
     for (const [type, pattern] of Object.entries(TOKENS)) {
       const match = text.match(pattern);
       if (match && match.index === 0) {
-        const tokenType = `${type.toLowerCase()}_${tokens.some(t => t.type === `${type.toLowerCase()}_start`) ? 'end' : 'start'}` as TokenType;
+        const tokenType = type.toLowerCase();
+        const isEnd = openTokens.has(tokenType);
+        
         tokens.push({
-          type: tokenType,
+          type: `${tokenType}_${isEnd ? 'end' : 'start'}` as TokenType,
           value: match[0],
           offset: currentOffset,
         });
+
+        if (isEnd) {
+          openTokens.delete(tokenType);
+        } else {
+          openTokens.set(tokenType, tokens.length - 1);
+        }
+
         text = text.slice(match[0].length);
         currentOffset += match[0].length;
         matched = true;
@@ -44,17 +53,16 @@ export function tokenize(input: string): Token[] {
       }
     }
 
-    // If no token matched, consume one character as text
     if (!matched) {
-      const char = text[0];
+      // Handle regular text (including newlines) as is
       if (tokens.length === 0 || tokens[tokens.length - 1].type !== 'text') {
         tokens.push({
           type: 'text',
-          value: char,
+          value: text[0],
           offset: currentOffset,
         });
       } else {
-        tokens[tokens.length - 1].value += char;
+        tokens[tokens.length - 1].value += text[0];
       }
       text = text.slice(1);
       currentOffset += 1;

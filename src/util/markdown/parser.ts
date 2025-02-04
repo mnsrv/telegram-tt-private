@@ -17,104 +17,84 @@ const START_TO_NODE_TYPE: Partial<Record<TokenType, MarkdownNodeType>> = {
 } as const;
 
 export function parse(tokens: Token[]): MarkdownNode[] {
-  const state: ParserState = {
-    nodes: [],
-    stack: [],
-  };
+  const nodes: MarkdownNode[] = [];
+  const stack: { type: string, startToken: Token, nodes: MarkdownNode[] }[] = [];
+  let currentNodes = nodes;
 
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
-
-    if (token.type === 'text') {
-      const textNode: MarkdownText = {
-        type: 'text',
-        content: token.value,
-        offset: token.offset,
-        length: token.value.length,
-      };
-
-      if (state.stack.length > 0) {
-        state.stack[state.stack.length - 1].children.push(textNode);
-      } else {
-        state.nodes.push(textNode);
-      }
-      continue;
-    }
-
-    // Handle formatting tokens
+  for (const token of tokens) {
     if (token.type.endsWith('_start')) {
-      state.stack.push({
-        type: token.type,
+      // Extract base type (e.g., 'bold_start' -> 'bold')
+      const type = token.type.slice(0, -6);
+      
+      // Create new formatting context
+      const context = {
+        type,
         startToken: token,
-        children: [],
-      });
+        nodes: []
+      };
+      
+      stack.push(context);
+      currentNodes = context.nodes;
       continue;
     }
 
     if (token.type.endsWith('_end')) {
-      const startType = token.type.replace('_end', '_start') as TokenType;
-      const stackItem = state.stack.pop();
+      const type = token.type.slice(0, -4);
+      const context = stack.pop();
 
-      if (!stackItem || stackItem.type !== startType) {
-        // Handle mismatched tags - convert both the start tag and content to text
-        if (stackItem) {
-          // First add the original start token as text
-          const startTextNode: MarkdownText = {
-            type: 'text',
-            content: stackItem.startToken.value,
-            offset: stackItem.startToken.offset,
-            length: stackItem.startToken.value.length,
-          };
-          state.nodes.push(startTextNode);
-          
-          // Then add all accumulated children as top-level nodes
-          state.nodes.push(...stackItem.children);
+      if (!context || context.type !== type) {
+        // Handle mismatched tags - treat them as text
+        if (context) {
+          stack.push(context);
+          currentNodes = context.nodes;
+        } else {
+          currentNodes = nodes;
         }
-        
-        // Finally add the mismatched end token as text
-        const textNode: MarkdownText = {
+        currentNodes.push({
           type: 'text',
           content: token.value,
           offset: token.offset,
-          length: token.value.length,
-        };
-        state.nodes.push(textNode);
-        
+          length: token.value.length
+        });
         continue;
       }
 
-      const formattedNode: MarkdownFormatted = {
-        type: START_TO_NODE_TYPE[startType] as Exclude<MarkdownNodeType, 'text'>,
-        content: stackItem.children,
-        offset: stackItem.startToken.offset,
-        length: (token.offset + token.value.length) - stackItem.startToken.offset,
+      // Create formatting node with collected content
+      const node: MarkdownNode = {
+        type: type as MarkdownNodeType,
+        content: context.nodes,
+        offset: context.startToken.offset,
+        length: (token.offset + token.value.length) - context.startToken.offset
       };
 
-      if (state.stack.length > 0) {
-        state.stack[state.stack.length - 1].children.push(formattedNode);
-      } else {
-        state.nodes.push(formattedNode);
-      }
+      // Add to parent context
+      currentNodes = stack.length > 0 ? stack[stack.length - 1].nodes : nodes;
+      currentNodes.push(node);
+      continue;
     }
-  }
 
-  // Handle any remaining open tags
-  while (state.stack.length > 0) {
-    const stackItem = state.stack.pop()!;
-    const textNode: MarkdownText = {
+    // Text tokens
+    currentNodes.push({
       type: 'text',
-      content: stackItem.startToken.value,
-      offset: stackItem.startToken.offset,
-      length: stackItem.startToken.value.length,
-    };
-
-    // Add any accumulated children as separate nodes
-    if (state.stack.length > 0) {
-      state.stack[state.stack.length - 1].children.push(textNode, ...stackItem.children);
-    } else {
-      state.nodes.push(textNode, ...stackItem.children);
-    }
+      content: token.value,
+      offset: token.offset,
+      length: token.value.length
+    });
   }
 
-  return state.nodes;
+  // Handle unclosed tags
+  while (stack.length > 0) {
+    const context = stack.pop()!;
+    // Convert start token to text
+    nodes.unshift({
+      type: 'text',
+      content: context.startToken.value,
+      offset: context.startToken.offset,
+      length: context.startToken.value.length
+    });
+    // Add collected nodes
+    nodes.push(...context.nodes);
+  }
+
+  return nodes;
 }
