@@ -118,4 +118,79 @@ describe('markdown parser', () => {
       }
     ]);
   });
+
+  it('should parse pre blocks with language', () => {
+    const tokens: Token[] = [
+      { type: 'pre_start', value: '```typescript\n', offset: 0, language: 'typescript' },
+      { type: 'text', value: 'const x = 5;', offset: 13 },
+      { type: 'pre_end', value: '```', offset: 24 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = 5;', offset: 13, length: 12 }
+        ],
+        offset: 0,
+        length: 27,
+        language: 'typescript'
+      }
+    ]);
+  });
+
+  it('should parse pre blocks without language', () => {
+    const tokens: Token[] = [
+      { type: 'pre_start', value: '```\n', offset: 0 },
+      { type: 'text', value: 'const x = 5;', offset: 4 },
+      { type: 'pre_end', value: '```', offset: 15 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = 5;', offset: 4, length: 12 }
+        ],
+        offset: 0,
+        length: 18
+      }
+    ]);
+  });
+
+  it('should handle nested formatting in pre blocks', () => {
+    const tokens: Token[] = [
+      { type: 'pre_start', value: '```typescript\n', offset: 0, language: 'typescript' },
+      { type: 'text', value: 'const x = ', offset: 13 },
+      { type: 'bold_start', value: '**', offset: 22 },
+      { type: 'text', value: '5', offset: 24 },
+      { type: 'bold_end', value: '**', offset: 25 },
+      { type: 'text', value: ';', offset: 27 },
+      { type: 'pre_end', value: '```', offset: 28 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = ', offset: 13, length: 10 },
+          {
+            type: 'bold',
+            content: [
+              { type: 'text', content: '5', offset: 24, length: 1 }
+            ],
+            offset: 22,
+            length: 5
+          },
+          { type: 'text', content: ';', offset: 27, length: 1 }
+        ],
+        offset: 0,
+        length: 31,
+        language: 'typescript'
+      }
+    ]);
+  });
 }); 

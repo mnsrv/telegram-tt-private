@@ -12,6 +12,7 @@ export interface MarkdownNode {
   content: string | MarkdownNode[];
   offset: number;
   length: number;
+  language?: string;  // For pre blocks
 }
 
 export interface MarkdownText extends MarkdownNode {

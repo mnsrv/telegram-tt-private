@@ -147,4 +147,90 @@ describe('markdown converter', () => {
       entities: undefined
     });
   });
+
+  it('should convert pre blocks with language', () => {
+    const ast: MarkdownNode[] = [
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = 5;', offset: 13, length: 12 }
+        ],
+        offset: 0,
+        length: 27,
+        language: 'typescript'
+      }
+    ];
+
+    expect(convertToFormattedText(ast)).toEqual({
+      text: 'const x = 5;',
+      entities: [{
+        type: ApiMessageEntityTypes.Pre,
+        offset: 0,
+        length: 12,
+        language: 'typescript'
+      }]
+    });
+  });
+
+  it('should convert pre blocks without language', () => {
+    const ast: MarkdownNode[] = [
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = 5;', offset: 4, length: 12 }
+        ],
+        offset: 0,
+        length: 18
+      }
+    ];
+
+    expect(convertToFormattedText(ast)).toEqual({
+      text: 'const x = 5;',
+      entities: [{
+        type: ApiMessageEntityTypes.Pre,
+        offset: 0,
+        length: 12
+      }]
+    });
+  });
+
+  it('should convert nested formatting in pre blocks', () => {
+    const ast: MarkdownNode[] = [
+      {
+        type: 'pre',
+        content: [
+          { type: 'text', content: 'const x = ', offset: 13, length: 10 },
+          {
+            type: 'bold',
+            content: [
+              { type: 'text', content: '5', offset: 24, length: 1 }
+            ],
+            offset: 22,
+            length: 5
+          },
+          { type: 'text', content: ';', offset: 27, length: 1 }
+        ],
+        offset: 0,
+        length: 31,
+        language: 'typescript'
+      }
+    ];
+
+    expect(convertToFormattedText(ast)).toEqual({
+      text: 'const x = 5;',
+      entities: [
+        {
+          type: ApiMessageEntityTypes.Pre,
+          offset: 0,
+          length: 12,
+          language: 'typescript'
+        },
+        {
+          type: ApiMessageEntityTypes.Bold,
+          offset: 10,
+          length: 1
+        }
+      ]
+    });
+  });
 }); 

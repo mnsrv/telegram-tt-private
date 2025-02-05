@@ -1,4 +1,4 @@
-import type { ApiFormattedText, ApiMessageEntity } from '../../api/types';
+import type { ApiFormattedText, ApiMessageEntity, ApiMessageEntityPre } from '../../api/types';
 import { ApiMessageEntityTypes } from '../../api/types';
 import type { MarkdownNode, MarkdownNodeType } from './types';
 
@@ -34,6 +34,11 @@ function processNode(node: MarkdownNode, state: ConversionState): void {
       offset: startOffset,
       length: 0  // Will update after processing children
     } as ApiMessageEntity;
+
+    // Add language info for pre blocks
+    if (node.type === 'pre' && 'language' in node) {
+      (entity as ApiMessageEntityPre).language = node.language;
+    }
     
     // Add to entities array
     state.entities.push(entity);

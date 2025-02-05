@@ -76,7 +76,7 @@ export function fixImageContent(fragment: HTMLDivElement) {
   });
 }
 
-function parseMarkdown(html: string) {
+export function parseMarkdown(html: string) {
   let parsedHtml = html.slice(0);
 
   // Strip redundant nbsp's

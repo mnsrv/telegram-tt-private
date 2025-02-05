@@ -14,6 +14,9 @@ const START_TO_NODE_TYPE: Partial<Record<TokenType, MarkdownNodeType>> = {
   bold_start: 'bold',
   italic_start: 'italic',
   code_start: 'code',
+  pre_start: 'pre',
+  spoiler_start: 'spoiler',
+  strike_start: 'strike',
 } as const;
 
 export function parse(tokens: Token[]): MarkdownNode[] {
@@ -64,7 +67,8 @@ export function parse(tokens: Token[]): MarkdownNode[] {
         type: type as MarkdownNodeType,
         content: context.nodes,
         offset: context.startToken.offset,
-        length: (token.offset + token.value.length) - context.startToken.offset
+        length: (token.offset + token.value.length) - context.startToken.offset,
+        ...(type === 'pre' && context.startToken.language ? { language: context.startToken.language } : {})
       };
 
       // Add to parent context

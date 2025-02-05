@@ -1,4 +1,4 @@
-import { tokenize } from '../tokenizer';
+import { tokenize, Token } from '../tokenizer';
 
 describe('markdown tokenizer', () => {
     it('should tokenize plain text', () => {
@@ -66,8 +66,51 @@ describe('markdown tokenizer', () => {
       const input = '****';
       const tokens = tokenize(input);
       expect(tokens).toEqual([
+        { type: 'text', value: '****', offset: 0, length: 4 }
+      ]);
+    });
+
+    function expectTokens(input: string, expectedTokens: Token[]) {
+      const tokens = tokenize(input);
+      expect(tokens).toEqual(expectedTokens);
+    }
+
+    it('should handle empty markers', () => {
+      expectTokens('****', [
+        { type: 'text', value: '****', offset: 0, length: 4 }
+      ]);
+
+      expectTokens('____', [
+        { type: 'text', value: '____', offset: 0, length: 4 }
+      ]);
+
+      expectTokens('||||', [
+        { type: 'text', value: '||||', offset: 0, length: 4 }
+      ]);
+
+      expectTokens('~~~~', [
+        { type: 'text', value: '~~~~', offset: 0, length: 4 }
+      ]);
+    });
+
+    it('should handle consecutive empty markers', () => {
+      expectTokens('******', [
+        { type: 'text', value: '******', offset: 0, length: 6 }
+      ]);
+
+      expectTokens('**********', [
+        { type: 'text', value: '**********', offset: 0, length: 10 }
+      ]);
+    });
+
+    it('should handle empty markers with content between', () => {
+      expectTokens('**text****text**', [
         { type: 'bold_start', value: '**', offset: 0 },
-        { type: 'bold_end', value: '**', offset: 2 }
+        { type: 'text', value: 'text', offset: 2 },
+        { type: 'bold_end', value: '**', offset: 6 },
+        { type: 'bold_start', value: '**', offset: 8 },
+        { type: 'text', value: 'text', offset: 10 },
+        { type: 'bold_end', value: '**', offset: 14 }
       ]);
     });
   });
