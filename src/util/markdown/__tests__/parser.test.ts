@@ -193,4 +193,70 @@ describe('markdown parser', () => {
       }
     ]);
   });
+
+  it('should parse spoiler text', () => {
+    const tokens: Token[] = [
+      { type: 'spoiler_start', value: '||', offset: 0 },
+      { type: 'text', value: 'hidden text', offset: 2 },
+      { type: 'spoiler_end', value: '||', offset: 12 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      {
+        type: 'spoiler',
+        content: [
+          { type: 'text', content: 'hidden text', offset: 2, length: 11 }
+        ],
+        offset: 0,
+        length: 14
+      }
+    ]);
+  });
+
+  it('should parse nested formatting within spoilers', () => {
+    const tokens: Token[] = [
+      { type: 'spoiler_start', value: '||', offset: 0 },
+      { type: 'text', value: 'hidden ', offset: 2 },
+      { type: 'bold_start', value: '**', offset: 9 },
+      { type: 'text', value: 'bold', offset: 11 },
+      { type: 'bold_end', value: '**', offset: 15 },
+      { type: 'text', value: ' text', offset: 17 },
+      { type: 'spoiler_end', value: '||', offset: 22 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      {
+        type: 'spoiler',
+        content: [
+          { type: 'text', content: 'hidden ', offset: 2, length: 7 },
+          {
+            type: 'bold',
+            content: [
+              { type: 'text', content: 'bold', offset: 11, length: 4 }
+            ],
+            offset: 9,
+            length: 8
+          },
+          { type: 'text', content: ' text', offset: 17, length: 5 }
+        ],
+        offset: 0,
+        length: 24
+      }
+    ]);
+  });
+
+  it('should handle unclosed spoiler tags', () => {
+    const tokens: Token[] = [
+      { type: 'spoiler_start', value: '||', offset: 0 },
+      { type: 'text', value: 'text', offset: 2 }
+    ];
+
+    const result = parse(tokens);
+    expect(result).toEqual([
+      { type: 'text', content: '||', offset: 0, length: 2 },
+      { type: 'text', content: 'text', offset: 2, length: 4 }
+    ]);
+  });
 }); 

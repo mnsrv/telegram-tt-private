@@ -118,4 +118,46 @@ describe('markdown parser', () => {
       }]
     });
   });
+
+  it('should parse spoiler text correctly', () => {
+    const input = 'This is ||hidden text|| and this is visible.';
+    const result = parseMarkdown(input);
+    expect(result).toEqual({
+      text: 'This is hidden text and this is visible.',
+      entities: [{
+        type: ApiMessageEntityTypes.Spoiler,
+        offset: 8,
+        length: 11
+      }]
+    });
+  });
+
+  it('should parse nested formatting within spoilers correctly', () => {
+    const input = 'Secret: ||hidden **bold** text||';
+    const result = parseMarkdown(input);
+    expect(result).toEqual({
+      text: 'Secret: hidden bold text',
+      entities: [
+        {
+          type: ApiMessageEntityTypes.Spoiler,
+          offset: 8,
+          length: 16
+        },
+        {
+          type: ApiMessageEntityTypes.Bold,
+          offset: 15,
+          length: 4
+        }
+      ]
+    });
+  });
+
+  it('should handle unclosed spoiler tags correctly', () => {
+    const input = 'This is ||unclosed text';
+    const result = parseMarkdown(input);
+    expect(result).toEqual({
+      text: 'This is ||unclosed text',
+      entities: undefined
+    });
+  });
 }); 
