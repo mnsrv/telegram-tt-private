@@ -89,6 +89,7 @@ import SafeLinkModal from './SafeLinkModal.async';
 import ConfettiContainer from './visualEffects/ConfettiContainer';
 import SnapEffectContainer from './visualEffects/SnapEffectContainer';
 import WaveContainer from './visualEffects/WaveContainer';
+import FolderColumn from '../left/main/FolderColumn';
 
 import './Main.scss';
 
@@ -536,6 +537,7 @@ const Main = ({
 
   return (
     <div ref={containerRef} id="Main" className={className}>
+      <FolderColumn />
       <LeftColumn ref={leftColumnRef} />
       <MiddleColumn leftColumnRef={leftColumnRef} isMobile={isMobile} />
       <RightColumn isMobile={isMobile} />

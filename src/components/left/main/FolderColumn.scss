@@ -1,0 +1,47 @@
+.FolderColumn {
+  width: 5rem;
+  background-color: var(--color-background-dark);
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &-item {
+    width: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    color: var(--color-text-secondary);
+    cursor: var(--custom-cursor, pointer);
+    position: relative;
+    user-select: none;
+    white-space: nowrap;
+    font-size: 0.875rem;
+
+    &:hover {
+      color: var(--color-text);
+      background-color: var(--color-chat-hover);
+    }
+
+    &--active {
+      color: var(--color-primary);
+      background-color: var(--color-chat-active);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 0.1875rem;
+        background-color: var(--color-primary);
+        border-radius: 0.125rem;
+      }
+    }
+
+    &--blocked {
+      opacity: 0.5;
+      cursor: var(--custom-cursor, not-allowed);
+    }
+  }
+} 
