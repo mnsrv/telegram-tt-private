@@ -139,6 +139,7 @@ export interface ISettings extends NotifySettings, Record<string, any> {
   shouldDebugExportedSenders?: boolean;
   shouldWarnAboutSvg?: boolean;
   shouldSkipWebAppCloseConfirmation: boolean;
+  tabPosition?: 'top' | 'left';
 }
 
 export type IAnchorPosition = {
