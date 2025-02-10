@@ -17,15 +17,35 @@
     user-select: none;
     white-space: nowrap;
     font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+
+    .FolderIcon {
+      width: 2.25rem;
+      height: 2.25rem;
+      flex-shrink: 0;
+      color: white;
+      opacity: 0.5;
+    }
 
     &:hover {
       color: var(--color-text);
       background-color: var(--color-chat-hover);
+
+      .FolderIcon {
+        opacity: 0.7;
+      }
     }
 
     &--active {
       color: var(--color-primary);
       background-color: var(--color-chat-active);
+
+      .FolderIcon {
+        opacity: 1;
+      }
 
       &::after {
         content: '';

@@ -11,6 +11,7 @@ import buildClassName from '../../../util/buildClassName';
 import { renderTextWithEntities } from '../../common/helpers/renderTextWithEntities';
 
 import useLang from '../../../hooks/useLang';
+import FolderLogo from '../../../assets/icons/folders/folder.svg';
 
 import './FolderColumn.scss';
 
@@ -68,6 +69,7 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
             )}
             onClick={isBlocked ? undefined : () => handleFolderClick(index)}
           >
+            <img src={FolderLogo} alt="" className="FolderIcon" draggable={false} />
             {renderTextWithEntities({
               text: folder.title.text,
               entities: folder.title.entities,
