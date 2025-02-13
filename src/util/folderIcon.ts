@@ -19,37 +19,10 @@ export const FOLDER_EMOJI_MAP: Record<string, FolderIconName> = {
   
   // Bots and System
   '🤖': 'bot',
-  '🗂': 'folder',
-  '📁': 'folder',  // Custom
-  '📋': 'folder',  // Setup
   
   // Special Categories
   '⭐': 'star',
   '👑': 'star',    // Crown
-  
-  // Animals and Nature
-  '🐱': 'user',
-  '🌹': 'folder',  // Flower
-  
-  // Activities and Objects
-  '📕': 'folder',
-  '💰': 'folder',
-  '🎮': 'folder',
-  '🏡': 'folder',
-  '🏠': 'folder',  // Home
-  '💡': 'folder',
-  '👍': 'folder',
-  '🔒': 'folder',
-  '❤️': 'folder',
-  '➕': 'folder',
-  '🎵': 'folder',
-  '🎨': 'folder',
-  '✈️': 'folder',
-  '⚽️': 'folder',
-  '🎓': 'folder',
-  '🛫': 'folder',
-  '🍷': 'folder',
-  '🎭': 'folder'
 };
 
 export const ALL_FOLDER_EMOJIS = [

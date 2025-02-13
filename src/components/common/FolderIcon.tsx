@@ -81,11 +81,11 @@ const FolderIconComponent: FC<OwnProps> = ({ folder, className }) => {
   const iconType = folder.emoticon ? getFolderIcon(folder.emoticon) : getDefaultFolderIcon(folder);
   
   // If it's an emoticon that doesn't map to an icon, show the emoticon
-  if (folder.emoticon && iconType === 'folder') {
-    return (
-      <span className={`${className} emoji`}>{folder.emoticon}</span>
-    );
-  }
+  // if (folder.emoticon && iconType === 'folder') {
+  //   return (
+  //     <span className={`${className} emoji`}>{folder.emoticon}</span>
+  //   );
+  // }
 
   // Otherwise use SVG icon
   return (
