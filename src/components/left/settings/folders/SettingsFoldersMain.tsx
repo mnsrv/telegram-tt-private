@@ -201,11 +201,11 @@ const SettingsFoldersMain: FC<OwnProps & StateProps> = ({
   }, [foldersById, isPremium, maxFolders]);
 
   const tabPositionOptions: IRadioOption[] = [{
-    label: lang('TabsAtTop'),
-    value: 'top',
-  }, {
     label: lang('TabsOnLeft'),
     value: 'left',
+  }, {
+    label: lang('TabsAtTop'),
+    value: 'top',
   }];
 
   const handleTabPositionChange = useCallback((value: string) => {
