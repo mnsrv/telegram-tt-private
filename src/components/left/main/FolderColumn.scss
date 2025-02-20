@@ -1,8 +1,6 @@
 .FolderColumn {
   width: 5rem;
   background-color: var(--color-background-dark);
-  display: flex;
-  flex-direction: column;
 
   #Main:not(.has-folders-sidebar) & {
     display: none;
@@ -90,6 +88,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
+    --ripple-color: var(--color-interactive-element-hover);
 
     .FolderIcon {
       width: 2.25rem;

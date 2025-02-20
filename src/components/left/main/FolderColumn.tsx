@@ -13,6 +13,7 @@ import { MEMO_EMPTY_ARRAY } from '../../../util/memo';
 import { IS_ELECTRON, IS_MAC_OS } from '../../../util/windowEnvironment';
 import { renderTextWithEntities } from '../../common/helpers/renderTextWithEntities';
 import DropdownMenu from '../../ui/DropdownMenu';
+import RippleEffect from '../../ui/RippleEffect';
 import Button from '../../ui/Button';
 import LeftSideMenuItems from './LeftSideMenuItems';
 
@@ -157,6 +158,7 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
               {hasUnread && (
                 <div className="badge">{counter.chatsCount}</div>
               )}
+              <RippleEffect />
             </div>
           );
         })}
