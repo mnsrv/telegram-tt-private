@@ -116,6 +116,16 @@
       .FolderIcon {
         opacity: 1;
       }
+
+      .badge {
+        background: var(--color-primary);
+      }
+    }
+
+    &.has-unread:not(&.has-unread--muted) {
+      .badge {
+        background: var(--color-primary);
+      }
     }
   }
 
@@ -124,5 +134,28 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .badge {
+    min-width: 1.125rem;
+    height: 1.125rem;
+    background: rgb(113, 117, 121);
+    border-radius: 0.75rem;
+    padding: 0 0.125rem;
+    color: white;
+    font-size: 0.75rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-medium);
+    text-align: center;
+    flex-shrink: 0;
+    position: absolute;
+    top: 0.4375rem;
+    right: 1.1875rem;
   }
 } 

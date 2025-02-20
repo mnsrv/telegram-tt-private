@@ -21,6 +21,7 @@ import useLang from '../../../hooks/useLang';
 import useLastCallback from '../../../hooks/useLastCallback';
 import useAppLayout from '../../../hooks/useAppLayout';
 import { useFullscreenStatus } from '../../../hooks/window/useFullscreen';
+import { useFolderManagerForUnreadCounters } from '../../../hooks/useFolderManager';
 import FolderIcon from '../../common/FolderIcon';
 
 import './FolderColumn.scss';
@@ -48,6 +49,7 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
   const { closeForumPanel, setActiveChatFolder } = getActions();
   const lang = useLang();
   const { isMobile } = useAppLayout();
+  const folderCountersById = useFolderManagerForUnreadCounters();
 
   const [isBotMenuOpen, markBotMenuOpen, unmarkBotMenuOpen] = useFlag();
 
@@ -127,6 +129,9 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
           if (!folder) return undefined;
 
           const isBlocked = id !== ALL_FOLDER_ID && index > maxFolders - 1;
+          const counter = folderCountersById[id];
+          const hasUnread = Boolean(counter?.chatsCount);
+          const isMuted = Boolean(counter?.chatsCount && !counter.notificationsCount);
 
           return (
             <div
@@ -135,6 +140,8 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
                 'FolderColumn-item',
                 index === activeChatFolder && 'selected',
                 isBlocked && 'FolderColumn-item--blocked',
+                hasUnread && 'has-unread',
+                hasUnread && isMuted && 'has-unread--muted',
               )}
               onClick={isBlocked ? undefined : () => handleFolderClick(index)}
             >
@@ -147,6 +154,9 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
                   })}
                 </span>
               </div>
+              {hasUnread && (
+                <div className="badge">{counter.chatsCount}</div>
+              )}
             </div>
           );
         })}
