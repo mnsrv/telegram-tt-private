@@ -1,6 +1,7 @@
 import type { FC, TeactNode } from '../../../lib/teact/teact';
 import React, { useRef } from '../../../lib/teact/teact';
 
+import type { ApiMessageEntityCustomEmoji } from '../../../api/types';
 import type { FolderIconName } from '../../../util/folderIcon';
 import type { MenuItemContextAction } from '../../ui/ListItem';
 
@@ -22,6 +23,7 @@ type OwnProps = {
   className?: string;
   title: TeactNode;
   iconType: FolderIconName;
+  customEmoji?: ApiMessageEntityCustomEmoji;
   isActive?: boolean;
   isBlocked?: boolean;
   badgeCount?: number;
@@ -37,6 +39,7 @@ const contextRootElementSelector = '#FolderColumn';
 const FolderItem: FC<OwnProps> = ({
   title,
   iconType,
+  customEmoji,
   isActive,
   isBlocked,
   badgeCount,
@@ -98,7 +101,7 @@ const FolderItem: FC<OwnProps> = ({
       onContextMenu={handleContextMenu}
       ref={itemRef}
     >
-      <FolderIcon iconType={iconType} className="FolderIcon" />
+      <FolderIcon customEmoji={customEmoji} iconType={iconType} className="FolderIcon" />
       <div className="FolderColumn-name">
         {typeof title === 'string' ? renderText(title) : title}
       </div>

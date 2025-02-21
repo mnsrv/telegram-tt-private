@@ -91,13 +91,6 @@
     overflow: hidden;
     --ripple-color: var(--color-interactive-element-hover);
 
-    .FolderIcon {
-      width: 2.25rem;
-      height: 2.25rem;
-      flex-shrink: 0;
-      opacity: 0.5;
-    }
-
     @media (hover: hover) {
       &:not(&--active):hover {
         background: var(--color-interactive-element-hover);
@@ -112,10 +105,6 @@
 
     &.selected {
       color: var(--color-primary);
-
-      .FolderIcon {
-        opacity: 1;
-      }
 
       .badge {
         background: var(--color-primary);

@@ -5,6 +5,7 @@ import { getActions, getGlobal, withGlobal } from '../../../global';
 import type {
   ApiChatFolder,
   ApiChatlistExportedInvite,
+  ApiMessageEntityCustomEmoji,
 } from '../../../api/types';
 import type { FolderIconName } from '../../../util/folderIcon';
 import type { MenuItemContextAction } from '../../ui/ListItem';
@@ -14,7 +15,12 @@ import { ALL_FOLDER_ID, APP_NAME, DEBUG, IS_BETA } from '../../../config';
 import { selectCanShareFolder, selectTabState } from '../../../global/selectors';
 import { selectCurrentLimit } from '../../../global/selectors/limits';
 import buildClassName from '../../../util/buildClassName';
-import { getDefaultFolderIcon, getFolderIcon } from '../../../util/folderIcon';
+import {
+  getDefaultFolderIcon,
+  getCustomEmojiFromTitle,
+  removeCustomEmojiFromTitle,
+  getFolderIcon,
+} from '../../../util/folderIcon';
 import { MEMO_EMPTY_ARRAY } from '../../../util/memo';
 import { IS_ELECTRON, IS_MAC_OS } from '../../../util/windowEnvironment';
 import { renderTextWithEntities } from '../../common/helpers/renderTextWithEntities';
@@ -37,6 +43,7 @@ type FolderItemWithProperties = {
   id?: number;
   title: TeactNode;
   iconType: FolderIconName;
+  customEmoji?: ApiMessageEntityCustomEmoji;
   badgeCount?: number;
   isBlocked?: boolean;
   isBadgeActive?: boolean;
@@ -124,6 +131,13 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
 
     return displayedFolders.map((folder, i) => {
       const { id, title, emoticon } = folder;
+
+      // Get custom emoji if it's at the start or end
+      const customEmoji = getCustomEmojiFromTitle(title);
+      
+      // Clean title if has custom emoji at start/end
+      const cleanedTitle = customEmoji ? removeCustomEmojiFromTitle(title) : title;
+
       const isBlocked = id !== ALL_FOLDER_ID && i > maxFolders - 1;
       const canShareFolder = selectCanShareFolder(getGlobal(), id);
       const contextActions: MenuItemContextAction[] = [];
@@ -181,10 +195,11 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
       return {
         id,
         title: renderTextWithEntities({
-          text: title.text,
-          entities: title.entities,
+          text: cleanedTitle.text,
+          entities: cleanedTitle.entities,
           noCustomEmojiPlayback: folder.noTitleAnimations,
         }),
+        customEmoji,
         iconType: emoticon
           ? getFolderIcon(folder.emoticon)
           : getDefaultFolderIcon(folder),
@@ -291,6 +306,7 @@ const FolderColumn: FC<OwnProps & StateProps> = ({
               key={item.id}
               title={item.title}
               iconType={item.iconType}
+              customEmoji={item.customEmoji}
               isActive={i === activeChatFolder}
               isBlocked={item.isBlocked}
               badgeCount={item.badgeCount}

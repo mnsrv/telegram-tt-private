@@ -1,3 +1,5 @@
+import { ApiFormattedText, ApiMessageEntityTypes } from "../api/types";
+
 export type FolderIconName = 'folder' | 'channel' | 'group' | 'chats' | 'user' | 'star' | 'chat' | 'bot';
 
 export const FOLDER_EMOJI_MAP: Record<string, FolderIconName> = {
@@ -83,4 +85,51 @@ export function getDefaultFolderIcon(folder: {
 
   // Default case
   return 'folder';
-} 
+}
+
+export function getCustomEmojiFromTitle(title: ApiFormattedText) {
+  if (!title.entities?.length) return undefined;
+
+  // Check for emoji at the start
+  const firstEntity = title.entities[0];
+  if (firstEntity.type === ApiMessageEntityTypes.CustomEmoji && firstEntity.offset === 0) {
+    return firstEntity;
+  }
+
+  // Check for emoji at the end
+  const lastEntity = title.entities[title.entities.length - 1];
+  if (lastEntity.type === ApiMessageEntityTypes.CustomEmoji && 
+      lastEntity.offset + lastEntity.length === title.text.length) {
+    return lastEntity;
+  }
+
+  return undefined;
+}
+
+export function removeCustomEmojiFromTitle(title: ApiFormattedText): ApiFormattedText {
+  if (!title.entities?.length) return title;
+
+  const customEmoji = getCustomEmojiFromTitle(title);
+  if (!customEmoji) return title;
+
+  // Remove the emoji from text and adjust entities
+  const newText = customEmoji.offset === 0
+    ? title.text.slice(customEmoji.length) // Remove from start
+    : title.text.slice(0, -customEmoji.length); // Remove from end
+
+  // Filter out the custom emoji entity and adjust offsets for remaining entities
+  const newEntities = title.entities
+    .filter((e) => e !== customEmoji)
+    .map((e) => {
+      if (customEmoji.offset === 0 && e.offset > customEmoji.offset) {
+        // If emoji was at start, decrease offset of all entities after it
+        return { ...e, offset: e.offset - customEmoji.length };
+      }
+      return e;
+    });
+
+  return {
+    text: newText.trim(),
+    entities: newEntities,
+  };
+}

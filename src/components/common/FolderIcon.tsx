@@ -1,13 +1,15 @@
 import type { FC } from '../../lib/teact/teact';
 import React, { memo } from '../../lib/teact/teact';
 
-import type { ApiChatFolder } from '../../api/types';
-import { getFolderIcon, getDefaultFolderIcon } from '../../util/folderIcon';
+import type { ApiMessageEntityCustomEmoji } from '../../api/types';
 import type { FolderIconName } from '../../util/folderIcon';
+
+import CustomEmoji from './CustomEmoji';
 
 import './FolderIcon.scss';
 
 type OwnProps = {
+  customEmoji?: ApiMessageEntityCustomEmoji;
   iconType: FolderIconName;
   className?: string;
 };
@@ -76,13 +78,17 @@ function renderIcon(type: FolderIconName) {
   }
 }
 
-const FolderIconComponent: FC<OwnProps> = ({ iconType, className }) => {
-  // If it's an emoticon that doesn't map to an icon, show the emoticon
-  // if (folder.emoticon && iconType === 'folder') {
-  //   return (
-  //     <span className={`${className} emoji`}>{folder.emoticon}</span>
-  //   );
-  // }
+const FolderIconComponent: FC<OwnProps> = ({ customEmoji, iconType, className }) => {
+  // If folder has a custom emoji at start/end of title, show it
+  if (customEmoji) {
+    return (
+      <CustomEmoji
+        documentId={customEmoji.documentId}
+        className={className}
+        size={36}
+      />
+    );
+  }
 
   // Otherwise use SVG icon
   return (
