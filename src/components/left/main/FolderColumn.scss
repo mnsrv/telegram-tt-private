@@ -1,6 +1,8 @@
 .FolderColumn {
   width: 5rem;
   background-color: var(--color-background-dark);
+  display: flex;
+  flex-direction: column;
 
   #Main:not(.has-folders-sidebar) & {
     display: none;
@@ -66,8 +68,6 @@
   }
 
   &-list {
-    display: flex;
-    flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
   }
