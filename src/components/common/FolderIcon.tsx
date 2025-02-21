@@ -8,7 +8,7 @@ import type { FolderIconName } from '../../util/folderIcon';
 import './FolderIcon.scss';
 
 type OwnProps = {
-  folder: ApiChatFolder;
+  iconType: FolderIconName;
   className?: string;
 };
 
@@ -76,10 +76,7 @@ function renderIcon(type: FolderIconName) {
   }
 }
 
-const FolderIconComponent: FC<OwnProps> = ({ folder, className }) => {
-  // First try to get icon from emoticon
-  const iconType = folder.emoticon ? getFolderIcon(folder.emoticon) : getDefaultFolderIcon(folder);
-  
+const FolderIconComponent: FC<OwnProps> = ({ iconType, className }) => {
   // If it's an emoticon that doesn't map to an icon, show the emoticon
   // if (folder.emoticon && iconType === 'folder') {
   //   return (
