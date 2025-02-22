@@ -1,10 +1,10 @@
 import type { FC } from '../../../../lib/teact/teact';
 import React, {
-  memo, useCallback, useEffect, useMemo, useState,
+  memo, useCallback, useEffect, useMemo, useState, useRef,
 } from '../../../../lib/teact/teact';
 import { getActions, getGlobal, withGlobal } from '../../../../global';
 
-import type { ApiChatlistExportedInvite } from '../../../../api/types';
+import type { ApiChatlistExportedInvite, ApiSticker } from '../../../../api/types';
 import type {
   FolderEditDispatch,
   FoldersState,
@@ -31,6 +31,8 @@ import FloatingActionButton from '../../../ui/FloatingActionButton';
 import InputText from '../../../ui/InputText';
 import ListItem from '../../../ui/ListItem';
 import Spinner from '../../../ui/Spinner';
+import Button from '../../../ui/Button';
+import FolderIconPickerMenu from '../../main/FolderIconPickerMenu.async';
 
 type OwnProps = {
   state: FoldersState;
@@ -94,6 +96,8 @@ const SettingsFoldersEdit: FC<OwnProps & StateProps> = ({
 
   const [isIncludedChatsListExpanded, setIsIncludedChatsListExpanded] = useState(false);
   const [isExcludedChatsListExpanded, setIsExcludedChatsListExpanded] = useState(false);
+  const [isEmoticonMenuOpen, setIsEmoticonMenuOpen] = useState(false);
+  const emoticonButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isRemoved) {
@@ -212,6 +216,14 @@ const SettingsFoldersEdit: FC<OwnProps & StateProps> = ({
     }
   }, [onSaveFolder, onOpenInvite, state.isTouched]);
 
+  const handleEmoticonSelect = useCallback((sticker: ApiSticker) => {
+    dispatch({
+      type: 'setEmoticon',
+      payload: sticker.emoji,
+    });
+    setIsEmoticonMenuOpen(false);
+  }, [dispatch]);
+
   function renderChatType(key: string, mode: 'included' | 'excluded') {
     const chatType = mode === 'included'
       ? CUSTOM_PEER_INCLUDED_CHAT_TYPES.find(({ type: typeKey }) => typeKey === key)
@@ -296,14 +308,32 @@ const SettingsFoldersEdit: FC<OwnProps & StateProps> = ({
             </p>
           )}
 
-          <InputText
-            className="mb-0"
-            label={lang('FilterNameHint')}
-            value={state.folder.title.text}
-            onChange={handleChange}
-            error={state.error && state.error === ERROR_NO_TITLE ? ERROR_NO_TITLE : undefined}
-          />
+          <div className="folder-title-input">
+            <InputText
+              className="mb-0"
+              label={lang('FilterNameHint')}
+              value={state.folder.title.text}
+              onChange={handleChange}
+              error={state.error && state.error === ERROR_NO_TITLE ? ERROR_NO_TITLE : undefined}
+            />
+            <Button
+              ref={emoticonButtonRef}
+              size="tiny"
+              color="translucent"
+              onClick={() => setIsEmoticonMenuOpen(!isEmoticonMenuOpen)}
+              className="emoticon-button"
+            >
+              {state.folder.emoticon || <i className="icon icon-folder" />}
+            </Button>
+          </div>
         </div>
+
+        <FolderIconPickerMenu
+          isOpen={isEmoticonMenuOpen}
+          emoticonButtonRef={emoticonButtonRef}
+          onCustomEmojiSelect={handleEmoticonSelect}
+          onClose={() => setIsEmoticonMenuOpen(false)}
+        />
 
         {!isOnlyInvites && (
           <div className="settings-item pt-3">

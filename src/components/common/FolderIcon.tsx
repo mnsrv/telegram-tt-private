@@ -3,10 +3,45 @@ import React, { memo } from '../../lib/teact/teact';
 
 import type { ApiMessageEntityCustomEmoji } from '../../api/types';
 import type { FolderIconName } from '../../util/folderIcon';
+import type { ApiSticker } from '../../api/types';
 
 import CustomEmoji from './CustomEmoji';
 
+import botIcon from '../../assets/icons/folders/bot.svg';
+import channelIcon from '../../assets/icons/folders/channel.svg';
+import chatIcon from '../../assets/icons/folders/chat.svg';
+import chatsIcon from '../../assets/icons/folders/chats.svg';
+import groupIcon from '../../assets/icons/folders/group.svg';
+import starIcon from '../../assets/icons/folders/star.svg';
+import userIcon from '../../assets/icons/folders/user.svg';
+import folderIcon from '../../assets/icons/folders/folder.svg';
+
 import './FolderIcon.scss';
+
+export const FOLDER_ICONS_SET_ID = 'folder-icons';
+export const DEFAULT_FOLDER_ICONS = [
+  ['chats', '👥', chatsIcon],
+  ['chat', '👤', chatIcon],
+  ['user', '👤', userIcon],
+  ['group', '👥', groupIcon],
+  ['star', '⭐', starIcon],
+  ['channel', '📢', channelIcon],
+  ['bot', '🤖', botIcon],
+  ['folder', '🗂', folderIcon],
+].map(([name, emoji, icon]) => ({
+  id: name,
+  mediaType: 'sticker',
+  stickerSetInfo: {
+    shortName: FOLDER_ICONS_SET_ID,
+  },
+  emoji,
+  isCustomEmoji: true,
+  isLottie: false,
+  isVideo: false,
+  thumbnail: {
+    dataUri: icon,
+  },
+} as ApiSticker));
 
 type OwnProps = {
   customEmoji?: ApiMessageEntityCustomEmoji;
