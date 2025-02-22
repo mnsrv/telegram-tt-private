@@ -3,6 +3,18 @@
 #LeftMainHeader {
   position: relative;
 
+  .main-menu {
+    @media (min-width: 926px) {
+      #Main.has-folders-sidebar &:not(.back-button) {
+        width: 0px;
+        opacity: 0;
+        overflow: hidden;
+        pointer-events: none;
+        transition: width 0.12s, opacity 0.12s;
+      }
+    }
+  }
+
   .DropdownMenuFiller {
     width: 2.5rem;
     height: 2.5rem;

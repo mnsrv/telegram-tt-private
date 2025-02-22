@@ -25,6 +25,7 @@ import useSyncEffect from '../../hooks/useSyncEffect';
 
 import Transition from '../ui/Transition';
 import ArchivedChats from './ArchivedChats.async';
+import FolderColumn from './main/FolderColumn';
 import LeftMain from './main/LeftMain';
 import NewChat from './newChat/NewChat.async';
 import Settings from './settings/Settings.async';
@@ -546,6 +547,8 @@ function LeftColumn({
   }
 
   return (
+    <>
+    <FolderColumn onContentChange={setContent} />
     <Transition
       ref={ref}
       name={shouldSkipHistoryAnimations ? 'none' : LAYERS_ANIMATION_NAME}
@@ -560,6 +563,7 @@ function LeftColumn({
     >
       {renderContent}
     </Transition>
+    </>
   );
 }
 

@@ -89,6 +89,7 @@ import SafeLinkModal from './SafeLinkModal.async';
 import ConfettiContainer from './visualEffects/ConfettiContainer';
 import SnapEffectContainer from './visualEffects/SnapEffectContainer';
 import WaveContainer from './visualEffects/WaveContainer';
+import FolderColumn from '../left/main/FolderColumn';
 
 import './Main.scss';
 
@@ -99,6 +100,7 @@ export interface OwnProps {
 type StateProps = {
   isMasterTab?: boolean;
   currentUserId?: string;
+  tabPosition?: 'top' | 'left';
   isLeftColumnOpen: boolean;
   isMiddleColumnOpen: boolean;
   isRightColumnOpen: boolean;
@@ -150,6 +152,7 @@ let DEBUG_isLogged = false;
 
 const Main = ({
   isMobile,
+  tabPosition,
   isLeftColumnOpen,
   isMiddleColumnOpen,
   isRightColumnOpen,
@@ -505,6 +508,7 @@ const Main = ({
     isNarrowMessageList && 'narrow-message-list',
     shouldSkipHistoryAnimations && 'history-animation-disabled',
     isFullscreen && 'is-fullscreen',
+    tabPosition === 'left' && 'has-folders-sidebar',
   );
 
   const handleBlur = useLastCallback(() => {
@@ -599,6 +603,7 @@ export default memo(withGlobal<OwnProps>(
       settings: {
         byKey: {
           wasTimeFormatSetManually,
+          tabPosition,
         },
       },
       currentUserId,
@@ -639,6 +644,7 @@ export default memo(withGlobal<OwnProps>(
 
     return {
       currentUserId,
+      tabPosition,
       isLeftColumnOpen: isLeftColumnShown,
       isMiddleColumnOpen: Boolean(chatId),
       isRightColumnOpen: selectIsRightColumnShown(global, isMobile),

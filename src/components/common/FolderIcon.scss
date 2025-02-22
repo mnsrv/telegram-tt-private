@@ -1,0 +1,14 @@
+.FolderIcon {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+
+  &.emoji {
+    font-size: 1.5rem;
+    line-height: 2.25rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

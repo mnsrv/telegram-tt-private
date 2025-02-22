@@ -26,6 +26,7 @@ export function animateOpening(isArchived?: boolean) {
     return;
   }
 
+  const containerRect = container.getBoundingClientRect();
   const { bottom: headerBottom, right: headerRight } = leftMainHeader.getBoundingClientRect();
   const toTop = headerBottom + RIBBON_OFFSET;
 
@@ -56,11 +57,13 @@ export function animateOpening(isArchived?: boolean) {
       left: fromLeft,
       width: fromWidth,
     } = toggleAvatar.getBoundingClientRect();
+    fromLeft -= containerRect.left;
 
-    const {
+    let {
       left: toLeft,
       width: toWidth,
     } = peer.getBoundingClientRect();
+    toLeft -= containerRect.left;
 
     if (toLeft > headerRight) {
       return;
@@ -167,6 +170,7 @@ export function animateClosing(isArchived?: boolean) {
   if (!toggler || !toggleAvatars || !ribbonPeers || !container || !leftMainHeader) {
     return;
   }
+  const containerRect = container.getBoundingClientRect();
   const { right: headerRight } = leftMainHeader.getBoundingClientRect();
 
   // Toggle avatars are in the reverse order
@@ -190,17 +194,19 @@ export function animateClosing(isArchived?: boolean) {
 
     if (!toggleAvatar) return;
 
-    const {
+    let {
       top: fromTop,
       left: fromLeft,
       width: fromWidth,
     } = peer.getBoundingClientRect();
+    fromLeft -= containerRect.left;
 
     let {
       left: toLeft,
       width: toWidth,
       top: toTop,
     } = toggleAvatar.getBoundingClientRect();
+    toLeft -= containerRect.left;
 
     if (fromLeft > headerRight) {
       return;

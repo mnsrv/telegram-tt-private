@@ -26,6 +26,7 @@ import {
   selectIsChatWithSelf,
   selectIsCurrentUserPremium,
 } from '../../global/selectors';
+import { DEFAULT_FOLDER_ICONS } from '../common/FolderIcon';
 import animateHorizontalScroll from '../../util/animateHorizontalScroll';
 import buildClassName from '../../util/buildClassName';
 import { pickTruthy, unique } from '../../util/iteratees';
@@ -62,6 +63,7 @@ type OwnProps = {
   selectedReactionIds?: string[];
   isStatusPicker?: boolean;
   isReactionPicker?: boolean;
+  isFolderIconPicker?: boolean;
   isTranslucent?: boolean;
   onCustomEmojiSelect: (sticker: ApiSticker) => void;
   onReactionSelect?: (reaction: ApiReactionWithPaid) => void;
@@ -124,6 +126,7 @@ const CustomEmojiPicker: FC<OwnProps & StateProps> = ({
   canAnimate,
   isReactionPicker,
   isStatusPicker,
+  isFolderIconPicker,
   isTranslucent,
   isSavedMessages,
   isCurrentUserPremium,
@@ -190,6 +193,15 @@ const CustomEmojiPicker: FC<OwnProps & StateProps> = ({
           isEmoji: true,
         });
       }
+    } else if (isFolderIconPicker) {
+      defaultSets.push({
+        id: TOP_SYMBOL_SET_ID,
+        accessHash: '',
+        title: lang('FolderIcons'),
+        stickers: DEFAULT_FOLDER_ICONS,
+        count: DEFAULT_FOLDER_ICONS.length,
+        isEmoji: true,
+      });
     }
 
     if (isReactionPicker && !isSavedMessages) {
@@ -253,7 +265,7 @@ const CustomEmojiPicker: FC<OwnProps & StateProps> = ({
           title: lang('RecentStickers'),
         });
       }
-    } else if (recentCustomEmojis?.length) {
+    } else if (recentCustomEmojis?.length && !isFolderIconPicker) {
       defaultSets.push({
         id: RECENT_SYMBOL_SET_ID,
         accessHash: '0',
@@ -281,7 +293,7 @@ const CustomEmojiPicker: FC<OwnProps & StateProps> = ({
     addedCustomEmojiIds, isReactionPicker, isStatusPicker, withDefaultTopicIcons, recentCustomEmojis,
     customEmojiFeaturedIds, stickerSetsById, topReactions, availableReactions, lang, recentReactions,
     defaultStatusIconsId, defaultTopicIconsId, isSavedMessages, defaultTagReactions, chatEmojiSetId,
-    isWithPaidReaction,
+    isWithPaidReaction, isFolderIconPicker,
   ]);
 
   const noPopulatedSets = useMemo(() => (
